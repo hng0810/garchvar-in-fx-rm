@@ -1,0 +1,119 @@
+---
+title: "Title"
+author: "Huy Nguyen"
+date: ""
+output:
+  prettydoc::html_pretty:
+    theme: tactile
+    highlight: github
+header-includes:
+- \usepackage{tikz}
+- \usepackage{pgfplots}
+- \usetikzlibrary{arrows,automata,positioning}
+- \usepackage[utf8]{inputenc}
+- \usepackage[utf8]{vietnam}
+- \usepackage{etoolbox}
+- \usepackage{xcolor}
+- \makeatletter
+- \preto{\@verbatim}{\topsep=0pt \partopsep=-0pt}
+- \makeatother
+- \DeclareMathOperator*{\argmax}{arg\,max}
+- \newcommand\tstrut{\rule{0pt}{3ex}}
+- \newcommand\bstrut{\rule[-2.5ex]{0pt}{0pt}}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+# setwd("G:/Other computers/My MacBook Air/Source/R/garchvar-in-forex-rm")
+setwd("/Users/hng/Personal Vault/Source/R/garchvar-in-forex-rm")
+```
+
+# INTRODUCTION
+<div align="justify">
+
+# DATA & LIBRARIES
+<div align="justify">
+
+```{r code , message= FALSE, warning = FALSE}
+library(zoo)
+library(ggplot2)
+library(tseries)
+library(FinTS)
+library(rugarch)
+df <- read.csv("GBP_VND.csv")
+df$date <- as.Date(df$date, format = "%d/%m/%Y")
+```
+
+```{r code , message= FALSE, warning = FALSE}
+head(df,5)
+```
+
+
+# DATA VISUALIZATION
+<div align="justify">
+
+```{r code , message= FALSE, warning = FALSE}
+ggplot(df, aes(x = date, y = price)) +
+  geom_line(color = 'blue') +
+  labs(x = '', y = 'Price (per GBP)', title = 'GBP/VND')
+ggplot(df, aes(x = date, y = return)) +
+  geom_line(color = 'blue') +
+  labs(x = '', y = 'Return', title = 'GBP/VND')
+```
+
+```{r code , message= FALSE, warning = FALSE}
+jarque.bera.test(na.omit(df$return))
+```
+
+```{r code , message= FALSE, warning = FALSE}
+summary(df$return)
+```
+
+```{r code , message= FALSE, warning = FALSE}
+data_fit <- na.omit(df$return[1:1000])
+data_backtest <- df$return[1000:1250]
+```
+
+```{r code , message= FALSE, warning = FALSE}
+fitdist(distribution = 'std' , x = data_fit)$pars
+```
+
+```{r code , message= FALSE, warning = FALSE}
+adf.test(data_fit)
+```
+
+```{r code , message= FALSE, warning = FALSE}
+ArchTest(data_fit, lags = 1, demean = T)
+```
+
+```{r code , message= FALSE, warning = FALSE}
+data_fit_2 <- data_fit^2
+plot(data_fit_2, type = "l")
+pacf(data_fit_2)
+```
+
+```{r code , message= FALSE, warning = FALSE}
+model_spec = ugarchspec(variance.model = 
+                          list(model = 'sGARCH', 
+                               garchOrder = c(1 , 1)), 
+                          mean.model = list(armaOrder = c(0 , 0)))
+model_fit = ugarchfit(spec = model_spec , 
+                      data = data_fit , 
+                      solver = 'solnp',
+                      out.sample=250)
+options(scipen = 999)
+model_fit@fit$matcoef
+```
+
+```{r code , message= FALSE, warning = FALSE}
+model_roll = ugarchroll(spec = model_spec, 
+                        data = data_fit, 
+                        n.start = 999, 
+                        refit.every = 1,
+                        refit.window = 'moving')
+```
+
+```{r code , message= FALSE, warning = FALSE}
+ArchTest(data_fit, lags = 1, demean = T)
+```
+
