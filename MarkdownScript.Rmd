@@ -3,9 +3,8 @@ title: "Title"
 author: "Huy Nguyen"
 date: ""
 output:
-  prettydoc::html_pretty:
-    theme: tactile
-    highlight: github
+  md_document:
+    variant: markdown_github
 header-includes:
 - \usepackage{tikz}
 - \usepackage{pgfplots}
