@@ -75,7 +75,7 @@ price graph.Non-stationary processes have means, variances and
 covariances that change over time. Using non-stationary time series data
 leads to unreliable forecasting. For the stationarity transformation, we
 prefer to calculate the simple daily returns:  
-$$ r_t = \frac{{{price}\_t-{price}\_{t-1}}}{{{price}\_{t-1}}} $$
+$$ r_t = \frac{{\text{{price}}\_t - \text{{price}}\_{t-1}}}{{\text{{price}}\_{t-1}}} $$
 
 ``` r
 ggplot(train_data, aes(x = date, y = return)) +
