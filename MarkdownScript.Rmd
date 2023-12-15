@@ -45,7 +45,8 @@ adf.test(train_data$price)
 ```
 
 <div align="justify">The ADF test result with a p-value of 0.3028, which is higher than the significance level of 0.05, we cannot reject the null hypothesis. This suggests that the exchange rate between GBP and VND is likely not stationary. This conclusion aligns with the graphical analysis of the price graph.Non-stationary processes have means, variances and covariances that change over time. Using non-stationary time series data leads to unreliable forecasting. For the stationarity transformation, we prefer to calculate the simple daily returns:  
-$$ r_t = \frac{{\text{{price}}_t - \text{{price}}_{t-1}}}{{\text{{price}}_{t-1}}} $$
+$ r_t = (price_t - price_{t-1}) / price_{t-1} $
+
 
 ```{r code , message= FALSE, warning = FALSE}
 ggplot(train_data, aes(x = date, y = return)) +
